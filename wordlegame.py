@@ -76,11 +76,12 @@ class Game:
         self.letter5_input_active = False
         self.play_counter = 0
 
-        self.answer_space_1 = pygame.Rect(50, 550, 100, 100)
-        self.answer_space_2 = pygame.Rect(150, 550, 100, 100)
-        self.answer_space_3 = pygame.Rect(250, 550, 100, 100)
-        self.answer_space_4 = pygame.Rect(350, 550, 100, 100)
-        self.answer_space_5 = pygame.Rect(450, 550, 100, 100)
+        #self.answer_space_1 = pygame.Rect(50, 550, 100, 100)
+       # print(type(self.answer_space_1))
+       # self.answer_space_2 = pygame.Rect(150, 550, 100, 100)
+       # self.answer_space_3 = pygame.Rect(250, 550, 100, 100)
+       # self.answer_space_4 = pygame.Rect(350, 550, 100, 100)
+        #self.answer_space_5 = pygame.Rect(450, 550, 100, 100)
 
         self.box_grid = []
         for i in range(6): # n of rows
@@ -146,25 +147,29 @@ class Game:
 
                     """
                     # get text input from 0 to -1 i.e. end.
-                    self.user_text = user_text[:-1]
-                    self.user_answer = user_answer[:-1]
+                    self.user_text = self.user_text[:-1]
+                    self.user_answer = self.user_answer[:-1]
                     self.add_text("") #delete the char from the screen
                     pygame.display.update()
 
-                    if self.answer_space_1.collidepoint(event.pos): 
+                    if pygame.Rect(50, 550, 100, 100).collidepoint(pygame.mouse.get_pos()): 
                         letter1_input_active = False
-                    if self.answer_space_2.collidepoint(event.pos): 
+                    if pygame.Rect(150, 550, 100, 100).collidepoint(pygame.mouse.get_pos()): 
                         letter2_input_active = False
-                    if self.answer_space_3.collidepoint(event.pos): 
+                    if pygame.Rect(250, 550, 100, 100).collidepoint(pygame.mouse.get_pos()): 
                         letter3_input_active = False
-                    if self.answer_space_4.collidepoint(event.pos): 
+                    if pygame.Rect(350, 550, 100, 100).collidepoint(pygame.mouse.get_pos()): 
                         letter4_input_active = False
-                    if self.answer_space_5.collidepoint(event.pos): 
+                    if pygame.Rect(450, 550, 100, 100).collidepoint(pygame.mouse.get_pos()): 
                         letter5_input_active = False
                 else:
                     ch = chr(event.key)
                     self.user_text = event.unicode
                     self.user_answer = self.user_answer + self.user_text
+                    print("User text: ", self.user_text)
+                    print("User answer: ", self.user_answer)
+
+
               
         if self.letter1_input_active == True: 
 
@@ -178,26 +183,29 @@ class Game:
                             if self.i == 450: 
                                 self.add_text(user_text)
                         else: 
-                            if self.answer_space_5.collidepoint(event.pos): 
+                            if pygame.Rect(450, 550, 100, 100).collidepoint(pygame.mouse.get_pos()): 
                                 self.letter5_input_active = True
-                                self.add_text(user_text)
+                                self.add_text(self.user_text)
                     else: 
-                        if self.answer_space_4.collidepoint(event.pos): 
+                        if pygame.Rect(350, 550, 100, 100).collidepoint(pygame.mouse.get_pos()): 
                             self.letter4_input_active = True
-                            self.add_text(user_text)
+                            self.add_text(self.user_text)
                 else: 
-                    if self.answer_space_3.collidepoint(event.pos): 
+                    if pygame.Rect(250, 550, 100, 100).collidepoint(pygame.mouse.get_pos()): 
                         self.letter3_input_active = True
-                        self.add_text(user_text)
+                        self.add_text(self.user_text)
 
             else: 
-                if self.answer_space_2.collidepoint(event.pos): 
+                if pygame.Rect(150, 550, 100, 100).collidepoint(pygame.mouse.get_pos()): 
                     self.letter2_input_active = True
-                    self.add_text(user_text)
+                    self.add_text(self.user_text)
         else: 
-            if self.answer_space_1.collidepoint(event.pos): 
+            if  pygame.Rect(50, 550, 100, 100).collidepoint(pygame.mouse.get_pos()): 
                 self.letter1_input_active = True
-                self.add_text(user_text)
+                self.add_text(self.user_text)
+                pygame.display.update()
+
+
 
    
     def mouse_down_enter(self, event):
@@ -330,16 +338,15 @@ class Game:
                     self.enter_button_active = False
             
     def mouse_down_letter(self,event): 
-        print("how entering mouse_down_letter")
-        if self.answer_space_1.collidepoint(event.pos): 
+        if pygame.Rect(50, 550, 100, 100).collidepoint(pygame.mouse.get_pos()): 
             self.letter1_input_active = True
-        elif self.answer_space_2.collidepoint(event.pos): 
+        elif pygame.Rect(150, 550, 100, 100).collidepoint(pygame.mouse.get_pos()): 
             self.letter2_input_active = True
-        elif self.answer_space_3.collidepoint(event.pos): 
+        elif pygame.Rect(250, 550, 100, 100).collidepoint(pygame.mouse.get_pos()): 
             self.letter3_input_active = True
-        elif self.answer_space_4.collidepoint(event.pos): 
+        elif pygame.Rect(350, 550, 100, 100).collidepoint(pygame.mouse.get_pos()): 
             self.letter4_input_active = True
-        elif self.answer_space_5.collidepoint(event.pos): 
+        elif pygame.Rect(450, 550, 100, 100).collidepoint(pygame.mouse.get_pos()): 
             self.letter5_input_active = True
 
 
