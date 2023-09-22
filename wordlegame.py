@@ -28,6 +28,7 @@ border_color = (0,0,0)
 user_input_color = (135, 206, 235) #light blue
 button_color = (34,139,34) #green 
 
+
 # Functional component
 
 # Part 1: Random five letter word (import online database)
@@ -65,6 +66,21 @@ class Game:
 
         self.display_screen, self.font = display_setup()
         self.enter = Button(self.display_screen, self.font)
+        self.user_text = ""
+        self.user_answer = ""
+        self.enter_button_active = False 
+        self.letter1_input_active = False
+        self.letter2_input_active = False
+        self.letter3_input_active = False
+        self.letter4_input_active = False
+        self.letter5_input_active = False
+        self.play_counter = 0
+
+        self.answer_space_1 = pygame.Rect(50, 550, 100, 100)
+        self.answer_space_2 = pygame.Rect(150, 550, 100, 100)
+        self.answer_space_3 = pygame.Rect(250, 550, 100, 100)
+        self.answer_space_4 = pygame.Rect(350, 550, 100, 100)
+        self.answer_space_5 = pygame.Rect(450, 550, 100, 100)
 
         self.box_grid = []
         for i in range(6): # n of rows
@@ -73,6 +89,7 @@ class Game:
                 box = Box(self.display_screen, i, j)
                 if i == 5: 
                     box.draw_box(user_input_color) 
+                    box_list.append(box)
                 else: 
                     box.draw_box() 
                     box_list.append(box)
@@ -112,12 +129,12 @@ class Game:
                         og_list = color_change_Dict["yellow"]
                         color_change_Dict["yellow"].append(char_list[i])
 
-    return color_change_Dict
+        return color_change_Dict
 
 
     ########### letters are printing on the screen now!!! but not working perfectly
     def key_pressed(self, event):
-        if letter1_input_active or letter2_input_active or letter3_input_active or letter4_input_active or letter5_input_active: 
+        if self.letter1_input_active or self.letter2_input_active or self.letter3_input_active or self.letter4_input_active or self.letter5_input_active: 
                 if event.key == pygame.K_BACKSPACE:
 
                     """
@@ -129,55 +146,65 @@ class Game:
 
                     """
                     # get text input from 0 to -1 i.e. end.
-                    user_text = user_text[:-1]
-                    user_answer = user_answer[:-1]
+                    self.user_text = user_text[:-1]
+                    self.user_answer = user_answer[:-1]
                     self.add_text("") #delete the char from the screen
                     pygame.display.update()
 
-                    if self.i == 50: 
-                        letter1_input_active == False
-                    if self.i == 150:
-                        letter2_input_active == False
-                    if self.i == 250:
-                        letter3_input_active == False
-                    if self.i == 350:
-                        letter4_input_active == False
-                    if self.i == 450:
-                        letter5_input_active == False
+                    if self.answer_space_1.collidepoint(event.pos): 
+                        letter1_input_active = False
+                    if self.answer_space_2.collidepoint(event.pos): 
+                        letter2_input_active = False
+                    if self.answer_space_3.collidepoint(event.pos): 
+                        letter3_input_active = False
+                    if self.answer_space_4.collidepoint(event.pos): 
+                        letter4_input_active = False
+                    if self.answer_space_5.collidepoint(event.pos): 
+                        letter5_input_active = False
                 else:
                     ch = chr(event.key)
-                    user_text = event.unicode
-                    user_answer = user_answer+user_text
+                    self.user_text = event.unicode
+                    self.user_answer = self.user_answer + self.user_text
               
-            if letter1_input_active == True: 
+        if self.letter1_input_active == True: 
 
-                if letter2_input_active == True: 
+            if self.letter2_input_active == True: 
 
-                    if letter3_input_active == True: 
+                if self.letter3_input_active == True: 
 
-                        if letter4_input_active == True: 
+                    if self.letter4_input_active == True: 
 
-                            if letter5_input_active == True: 
-                                if self.i == 450: 
-                                    self.add_text(user_text)
-                            else: 
-                                if self.i == 350: 
-                                    self.add_text(user_text)
+                        if self.letter5_input_active == True: 
+                            if self.i == 450: 
+                                self.add_text(user_text)
                         else: 
-                            if self.i == 250: 
+                            if self.answer_space_5.collidepoint(event.pos): 
+                                self.letter5_input_active = True
                                 self.add_text(user_text)
                     else: 
-                        if self.i == 150: 
+                        if self.answer_space_4.collidepoint(event.pos): 
+                            self.letter4_input_active = True
                             self.add_text(user_text)
                 else: 
-                    if self.i == 50: 
+                    if self.answer_space_3.collidepoint(event.pos): 
+                        self.letter3_input_active = True
                         self.add_text(user_text)
+
+            else: 
+                if self.answer_space_2.collidepoint(event.pos): 
+                    self.letter2_input_active = True
+                    self.add_text(user_text)
+        else: 
+            if self.answer_space_1.collidepoint(event.pos): 
+                self.letter1_input_active = True
+                self.add_text(user_text)
 
    
     def mouse_down_enter(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:
-            if game.enter.location.collidepoint(event.pos): 
-                if letter1_input_active and letter2_input_active and letter3_input_active and letter4_input_active and letter5_input_active: 
+            if self.enter.location.collidepoint(event.pos): 
+                #error: "letter1_input_active" referenced before assignment 
+                if self.letter1_input_active and self.letter2_input_active and self.letter3_input_active and self.letter4_input_active and self.letter5_input_active: 
                     
                     print("User answer is: ", user_answer)
                     user_answer_char_list = list(user_answer)
@@ -294,27 +321,26 @@ class Game:
                                 else: 
                                     answer_box.add_text(user_answer_char_list[4])    
 
-                    play_counter = play_counter + 1
-                    letter1_input_active = False
-                    letter2_input_active = False
-                    letter3_input_active = False
-                    letter4_input_active = False
-                    letter5_input_active = False
-                    enter_button_active = False
+                    self.play_counter = play_counter + 1
+                    self.letter1_input_active = False
+                    self.letter2_input_active = False
+                    self.letter3_input_active = False
+                    self.letter4_input_active = False
+                    self.letter5_input_active = False
+                    self.enter_button_active = False
             
-
     def mouse_down_letter(self,event): 
-
-        if pygame.Rect(50,550, 100,100).collidepoint(event.pos): 
-            letter1_input_active = True
-        elif pygame.Rect(150,550, 100,100).collidepoint(event.pos): 
-            letter2_input_active = True
-        elif pygame.Rect(250,550, 100,100).collidepoint(event.pos): 
-            letter3_input_active = True
-        elif pygame.Rect(350,550, 100,100).collidepoint(event.pos): 
-            letter4_input_active = True
-        elif pygame.Rect(450,550, 100,100).collidepoint(event.pos): 
-            letter5_input_active = True
+        print("how entering mouse_down_letter")
+        if self.answer_space_1.collidepoint(event.pos): 
+            self.letter1_input_active = True
+        elif self.answer_space_2.collidepoint(event.pos): 
+            self.letter2_input_active = True
+        elif self.answer_space_3.collidepoint(event.pos): 
+            self.letter3_input_active = True
+        elif self.answer_space_4.collidepoint(event.pos): 
+            self.letter4_input_active = True
+        elif self.answer_space_5.collidepoint(event.pos): 
+            self.letter5_input_active = True
 
 
     """
@@ -578,17 +604,6 @@ def main():
     
     not_done = True
 
-    #For every round 
-    user_text = ""
-    user_answer = ""  
-    not_done = True
-    enter_button_active = False
-    letter1_input_active = False
-    letter2_input_active = False
-    letter3_input_active = False
-    letter4_input_active = False
-    letter5_input_active = False
-    play_counter = 0
   
     while not_done:
         for event in pygame.event.get():
@@ -599,7 +614,7 @@ def main():
                 game.mouse_down_enter(event)
             
             if event.type == pygame.MOUSEBUTTONDOWN: 
-                mouse_down_letter
+                game.mouse_down_letter(event)
 
             if event.type == pygame.KEYDOWN:
                 game.key_pressed(event)
