@@ -71,47 +71,255 @@ class Game:
             box_list = []
             for j in range(5): # n of columns
                 box = Box(self.display_screen, i, j)
-                box.draw_box() # draw box on display
-                box_list.append(box)
+                if i == 5: 
+                    box.draw_box(user_input_color) 
+                else: 
+                    box.draw_box() 
+                    box_list.append(box)
             self.box_grid.append(box_list)
-        
+
+        """ 
         # set where the words will be typed
         self.curr_row = 0 # based on how many words have been guessed
         self.curr_col = 0 # based on how many ch have been typed/deleted
         self.curr_box = self.box_grid[self.curr_row][self.curr_col]
 
+        """
+
     def start():
         return
     
+    """
     def update_curr_box(self, p, q): # args are by what you want to incr/decr the indexes by
         self.curr_row = self.curr_row + p
         self.curr_col = self.curr_col + q
         self.curr_box = self.box_grid[self.curr_row][self.curr_col]
-    
+
+    """
+
+    def calculate_input(user_word): 
+        color_change_Dict = {"green": [], "yellow": []}
+        og_list = []
+        char_list = list(user_word) #putting the word into a list of individual char
+        for i in range(len(char_list)): 
+            for j in range(len(self.answer_list)): 
+                if char_list[i] == self.answer_list[j]:
+                    if i == j: 
+                        print("Char: ", char_list[i])
+                        color_change_Dict["green"].append(char_list[i])
+                        print("APPEND: ", color_change_Dict["green"])
+                    else: 
+                        og_list = color_change_Dict["yellow"]
+                        color_change_Dict["yellow"].append(char_list[i])
+
+    return color_change_Dict
+
+
     ########### letters are printing on the screen now!!! but not working perfectly
     def key_pressed(self, event):
-        if event.key == pygame.K_BACKSPACE: 
-            # delete letter and set curr box to previous one
-            self.curr_box.draw_box()
-            if self.curr_col != 0:
-                self.update_curr_box(0, -1)  
-            # todo: fix this so it works in more situations
-        elif event.key == pygame.K_RETURN:
-            # check if there are 5 letters + word in list, then enter + update colors etc
-            # todo: all of this
-            pass
-        else: 
-            # try and catch bc not all other chars will be alphabetic
-            try: 
-                ch = chr(event.key).lower()
-                self.curr_box.add_text(ch, self.font, self.display_screen)
-                if self.curr_col != 4:
-                    self.update_curr_box(0, 1)
-            except:
-                print("aaaah error")
-    
+        if letter1_input_active or letter2_input_active or letter3_input_active or letter4_input_active or letter5_input_active: 
+                if event.key == pygame.K_BACKSPACE:
+
+                    """
+                    # delete letter and set curr box to previous one
+                    #self.curr_box.draw_box()
+                    #if self.curr_col != 0:
+                    #    self.update_curr_box(0, -1)  
+                    # todo: fix this so it works in more situations
+
+                    """
+                    # get text input from 0 to -1 i.e. end.
+                    user_text = user_text[:-1]
+                    user_answer = user_answer[:-1]
+                    self.add_text("") #delete the char from the screen
+                    pygame.display.update()
+
+                    if self.i == 50: 
+                        letter1_input_active == False
+                    if self.i == 150:
+                        letter2_input_active == False
+                    if self.i == 250:
+                        letter3_input_active == False
+                    if self.i == 350:
+                        letter4_input_active == False
+                    if self.i == 450:
+                        letter5_input_active == False
+                else:
+                    ch = chr(event.key)
+                    user_text = event.unicode
+                    user_answer = user_answer+user_text
+              
+            if letter1_input_active == True: 
+
+                if letter2_input_active == True: 
+
+                    if letter3_input_active == True: 
+
+                        if letter4_input_active == True: 
+
+                            if letter5_input_active == True: 
+                                if self.i == 450: 
+                                    self.add_text(user_text)
+                            else: 
+                                if self.i == 350: 
+                                    self.add_text(user_text)
+                        else: 
+                            if self.i == 250: 
+                                self.add_text(user_text)
+                    else: 
+                        if self.i == 150: 
+                            self.add_text(user_text)
+                else: 
+                    if self.i == 50: 
+                        self.add_text(user_text)
+
+   
+    def mouse_down_enter(self, event):
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if game.enter.location.collidepoint(event.pos): 
+                if letter1_input_active and letter2_input_active and letter3_input_active and letter4_input_active and letter5_input_active: 
+                    
+                    print("User answer is: ", user_answer)
+                    user_answer_char_list = list(user_answer)
+                    answer_Dict = calculate_input(user_answer)                    
+                    
+                    print("break 1")
+                    print("Play counter: ", play_counter)
+
+                    for i in range(len(answer_Dict["green"])):
+                        if answer_Dict.get("green")[i] == user_answer_char_list[0]: 
+                            answer_box = Box(display_screen,0, play_counter)
+                            answer_box.draw_box(green) 
+                            answer_box.add_text(user_answer_char_list[0])    
+                            print("green 1")
+
+                        
+                        else: 
+                            for j in range(len(answer_Dict["yellow"])):
+                                if answer_Dict.get("yellow")[j] == user_answer_char_list[0]: 
+                                    answer_box = Box(display_screen,0, play_counter)
+                                    answer_box.draw_box(yellow) 
+                                    answer_box.add_text(user_answer_char_list[0])    
+                                    print("yellow 1")
+                                
+                                else: 
+                                    answer_box.add_text(user_answer_char_list[0])    
+                    
+                    pygame.display.update() 
+                    pygame.time.wait(2000)
+
+
+                    for i in range(len(answer_Dict["green"])):
+                        if answer_Dict.get("green")[i] == user_answer_char_list[1]: 
+                            answer_box = Box(display_screen,1, play_counter)
+                            answer_box.draw_box(green) 
+                            answer_box.add_text(user_answer_char_list[1])    
+                            print("green 2")
+
+                        
+                        else: 
+                            for j in range(len(answer_Dict["yellow"])):
+                                if answer_Dict.get("yellow")[j] == user_answer_char_list[1]: 
+                                    answer_box = Box(display_screen,1, play_counter)
+                                    answer_box.draw_box(yellow) 
+                                    answer_box.add_text(user_answer_char_list[1])    
+                                    print("yellow 2")
+
+                                
+                                else: 
+                                    answer_box.add_text(user_answer_char_list[1])    
+                    
+                    pygame.display.update() 
+                    pygame.time.wait(2000)
+
+
+                    for i in range(len(answer_Dict["green"])):
+                        if answer_Dict.get("green")[i] == user_answer_char_list[2]: 
+                            answer_box = Box(display_screen,2, play_counter)
+                            answer_box.draw_box(green) 
+                            answer_box.add_text(user_answer_char_list[2])    
+                            print("green 3")
+                        
+                        else: 
+                            for j in range(len(answer_Dict["yellow"])):
+                                if answer_Dict.get("yellow")[j] == user_answer_char_list[2]: 
+                                    answer_box = Box(display_screen,2, play_counter)
+                                    answer_box.draw_box(yellow) 
+                                    answer_box.add_text(user_answer_char_list[2])    
+                                    print("yellow 3")
+
+                                else: 
+                                    answer_box.add_text(user_answer_char_list[2])    
+
+                    
+                    pygame.display.update() 
+                    pygame.time.wait(2000)
+
+                    for i in range(len(answer_Dict["green"])):
+                        if answer_Dict.get("green")[i] == user_answer_char_list[3]: 
+                            answer_box = Box(display_screen,3, play_counter)
+                            answer_box.draw_box(green) 
+                            answer_box.add_text(user_answer_char_list[3])    
+                            print("green 4")
+                        
+                        else: 
+                            for j in range(len(answer_Dict["yellow"])):
+                                if answer_Dict.get("yellow")[j] == user_answer_char_list[3]: 
+                                    answer_box = Box(display_screen,3, play_counter)
+                                    answer_box.draw_box(yellow) 
+                                    answer_box.add_text(user_answer_char_list[3])    
+                                    print("yellow 4")
+
+                                else: 
+                                    answer_box.add_text(user_answer_char_list[3])    
+
+                    pygame.display.update() 
+                    pygame.time.wait(2000)
+                    
+                    for i in range(len(answer_Dict["green"])):
+                        if answer_Dict.get("green")[i] == user_answer_char_list[4]: 
+                            answer_box = Box(display_screen,4, play_counter)
+                            answer_box.draw_box(green) 
+                            answer_box.add_text(user_answer_char_list[4])    
+                            print("green 5")
+                        
+                        else: 
+                            for j in range(len(answer_Dict["yellow"])):
+                                if answer_Dict.get("yellow")[j] == user_answer_char_list[4]: 
+                                    answer_box = Box(display_screen,4, play_counter)
+                                    answer_box.draw_box(green) 
+                                    answer_box.add_text(user_answer_char_list[4])    
+                                    print("green 5")
+
+                                else: 
+                                    answer_box.add_text(user_answer_char_list[4])    
+
+                    play_counter = play_counter + 1
+                    letter1_input_active = False
+                    letter2_input_active = False
+                    letter3_input_active = False
+                    letter4_input_active = False
+                    letter5_input_active = False
+                    enter_button_active = False
+            
+
+    def mouse_down_letter(self,event): 
+
+        if pygame.Rect(50,550, 100,100).collidepoint(event.pos): 
+            letter1_input_active = True
+        elif pygame.Rect(150,550, 100,100).collidepoint(event.pos): 
+            letter2_input_active = True
+        elif pygame.Rect(250,550, 100,100).collidepoint(event.pos): 
+            letter3_input_active = True
+        elif pygame.Rect(350,550, 100,100).collidepoint(event.pos): 
+            letter4_input_active = True
+        elif pygame.Rect(450,550, 100,100).collidepoint(event.pos): 
+            letter5_input_active = True
+
+
+    """
     ########### this function is not working at all atm
-    def pressed_enter(self):
+    def pressed_enter(self, event):
         #change the letters that need to be changed
         for box in self.curr_row:
             print(box.letter, answer_list[box.j])
@@ -125,6 +333,8 @@ class Game:
         # update curr row down
         self.update_curr_box(1, -4) # -4 so it'll go back to 0? idk if it works
 
+
+"""
 
 # class for each of the boxes on the display
 class Box:
@@ -176,57 +386,6 @@ class Banner:
     # todo: create errors if word not in list or if word not 5 letters 
 
 
-# Part 2: Function (param: user's word guess)(returns a dictionary of what letters of the game board should change)
-
-def every_input(user_word): 
-    color_change_Dict = {"green": [], "yellow": []}
-    og_list = []
-    char_list = list(user_word) #putting the word into a list of individual char
-    for i in range(len(char_list)): 
-        for j in range(len(word_answer_char)): 
-            if char_list[i] == word_answer_char[j]:
-                if i == j: 
-                    print("Char: ", char_list[i])
-                    color_change_Dict["green"].append(char_list[i])
-                    print("APPEND: ", color_change_Dict["green"])
-
-                else: 
-                    og_list = color_change_Dict["yellow"]
-                    color_change_Dict["yellow"].append(char_list[i])
-
-    return color_change_Dict
-
-"""
-Letter_class_list = []
-Letter_class_list_input = []
-
-
-#For every round 
-user_text = ""
-user_answer = ""  
-
-not_done = True
-enter_button_active = False
-letter1_input_active = False
-letter2_input_active = False
-letter3_input_active = False
-letter4_input_active = False
-letter5_input_active = False
-play_counter = 0
-"""
-
-"""def update(user_answer): 
-    user_answer_char_list = list(user_answer)
-
-    for i in range(5): 
-        txt_surface = font.render(user_answer_char_list[i], True, (0,0,0))
-      #  Letter_class_list[(play_counter*5)+i].text = user_answer_char_list[i]
-        Letter_class_list[(play_counter*5)+i].addText(user_answer_char_list[i])
-       # screen.blit(txt_surface, (Letter_class_list[(play_counter*5)+i].left_x,Letter_class_list[(play_counter*5)+i].top_y))
-
-    play_counter = play_counter + 1
-
-    pygame.display.update() """
 
 """
 while not_done:
@@ -240,7 +399,7 @@ while not_done:
                     
                     print("User answer is: ", user_answer)
                     user_answer_char_list = list(user_answer)
-                    answer_Dict = every_input(user_answer)
+                    answer_Dict = calculate_input(user_answer)
                     
                     txt_surface = font.render(user_answer_char_list[0], True, (0,0,0))
 
@@ -418,13 +577,29 @@ def main():
     game = Game()
     
     not_done = True
+
+    #For every round 
+    user_text = ""
+    user_answer = ""  
+    not_done = True
+    enter_button_active = False
+    letter1_input_active = False
+    letter2_input_active = False
+    letter3_input_active = False
+    letter4_input_active = False
+    letter5_input_active = False
+    play_counter = 0
+  
     while not_done:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 not_done = False
 
             if event.type == pygame.MOUSEBUTTONDOWN and game.enter.location.collidepoint(event.pos):
-                game.pressed_enter(event)
+                game.mouse_down_enter(event)
+            
+            if event.type == pygame.MOUSEBUTTONDOWN: 
+                mouse_down_letter
 
             if event.type == pygame.KEYDOWN:
                 game.key_pressed(event)
