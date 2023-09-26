@@ -27,6 +27,8 @@ border_width = 3
 border_color = (0,0,0)
 user_input_color = (135, 206, 235) #light blue
 button_color = (34,139,34) #green 
+play_again_button_color = (216,191,216) #purple
+quit_game_button_color = (220,20,60) #red
 
 
 # Functional component
@@ -43,7 +45,7 @@ def pick_word():
     print("The answer to this wordle is: ", chosen_word)
 
     # putting the word into a list of individual char
-    return list(chosen_word)
+    return chosen_word, list(chosen_word)
 
 
 # called within the init of game class
@@ -62,9 +64,9 @@ def display_setup():
 # picking the answer, setting up the display, and creating all game objs start here 
 class Game:
     def __init__(self):
-        self.answer_list = pick_word()
-
+        self.answer_word, self.answer_list = pick_word()
         self.display_screen, self.font = display_setup()
+        self.font_small = pygame.font.Font('freesansbold.ttf', 20)
         self.enter = Button(self.display_screen, self.font)
         self.user_text = ""
         self.user_answer = ""
@@ -75,6 +77,9 @@ class Game:
         self.letter4_input_active = False
         self.letter5_input_active = False
         self.play_counter = 0
+        self.quit_game_button = pygame.Rect(50, 900,200,75)
+        self.play_again_button = pygame.Rect(300, 900,200,75)
+        self.game_won = False
 
         #self.answer_space_1 = pygame.Rect(50, 550, 100, 100)
        # print(type(self.answer_space_1))
@@ -117,8 +122,14 @@ class Game:
 
     def calculate_input(self, user_word): 
         color_change_Dict = {"green": [], "yellow": []}
-        og_list = []
         char_list = list(user_word) #putting the word into a list of individual char
+        og_list = []
+        answer_duplicate_letters = []
+        for every_char in char_list: 
+            if char_list.count(every_char) > 1: 
+                if answer_duplicate_letters.count(every_char) == 0: 
+                    answer_duplicate_letters.append(every_char)
+        
         for i in range(len(char_list)): 
             for j in range(len(self.answer_list)): 
                 if char_list[i] == self.answer_list[j]:
@@ -128,13 +139,45 @@ class Game:
                         print("APPEND green: ", color_change_Dict["green"])
                         break
                     else: 
-                        #duplicate checkon the answer (eg.g never) 
-                        og_list = color_change_Dict["yellow"]
-                        color_change_Dict["yellow"].append(char_list[i])
-                        print("APPEND yellow: ", color_change_Dict["yellow"])
+                        if char_list[i] in answer_duplicate_letters: 
+                            if char_list[i] != self.answer_list[i]: 
+                                og_list = color_change_Dict["yellow"]
+                                color_change_Dict["yellow"].append(char_list[i])
+                                print("APPEND yellow: ", color_change_Dict["yellow"])
+                        else: 
+                            og_list = color_change_Dict["yellow"]
+                            color_change_Dict["yellow"].append(char_list[i])
+                            print("APPEND yellow: ", color_change_Dict["yellow"])
 
         return color_change_Dict
+    
+    def if_game_won(self): 
+        
+        won_message = ("You won! The answer was: %s. " % self.answer_word)
+        text_0 = self.font_small.render(won_message, True, (0,0,0))
+        textRect0 =  text_0.get_rect(topleft = (150, 800), width = 500, height = 100)
+        self.display_screen.blit(text_0, textRect0)
 
+        #pygame.draw.rect(self.display_screen, box_color, (500, 800,500,100))
+       # won_message.add_text(("You won! \n The answer was: ", self.answer_word), self.font_small)
+
+        play_again = "Play Again"
+        quit_game = "Quit Game"
+        # enter button font
+        text_1 = self.font_small.render(play_again, True, (0,0,0))
+        text_2 = self.font_small.render(quit_game, True, (0,0,0))
+        textRect1 = text_1.get_rect(topleft = (150, 850), width = 200, height = 50)
+        textRect2 = text_2.get_rect(topleft = (400, 850), width = 200, height = 50)
+
+        #ENTER button draw
+        pygame.draw.rect(self.display_screen, play_again_button_color, (150, 850,200,50))
+        pygame.draw.rect(self.display_screen, border_color, (150, 850,200,50), width = border_width)
+
+        pygame.draw.rect(self.display_screen, quit_game_button_color, (400, 850,200,50))
+        pygame.draw.rect(self.display_screen, border_color, (400, 850,200,50), width = border_width)
+
+        self.display_screen.blit(text_1, textRect1)
+        self.display_screen.blit(text_2, textRect2)
 
     # only does something if first box has been clicked
     def key_pressed(self, event):
@@ -410,7 +453,7 @@ class Game:
                         for j in range(len(answer_Dict["yellow"])):
                             if answer_Dict.get("yellow")[j] == user_answer_char_list[4]: 
                                 answer_box = Box(self.display_screen,self.play_counter, 4)
-                                answer_box.draw_box(green) 
+                                answer_box.draw_box(yellow) 
                                 answer_box.add_text(user_answer_char_list[4], self.font)    
                                 print("yellow 5")
                                 break
@@ -429,6 +472,10 @@ class Game:
                     self.box_grid[5][4].draw_box(user_input_color)
                     pygame.display.update() 
                     self.user_answer = ""
+
+                    if len(answer_Dict.get("green")) == 5: 
+                        self.if_game_won()
+                        self.game_won == True 
 
 
     
@@ -510,10 +557,11 @@ class Button:
 
         #ENTER button draw
         pygame.draw.rect(display_screen, button_color, (200, 700,200,75))
-        pygame.draw.rect(display_screen, button_color, (200, 700,200,75), width = border_width)
+        pygame.draw.rect(display_screen, border_color, (200, 700,200,75), width = border_width)
         display_screen.blit(text, textRect)
-        
+
         self.location = pygame.Rect(200, 700,200,75)
+        
 
 
 # for errors after
@@ -537,9 +585,15 @@ def main():
             if event.type == pygame.QUIT:
                 not_done = False
 
+            if event.type == pygame.MOUSEBUTTONDOWN and game.quit_game_button.collidepoint(event.pos):
+                not_done = False
+
             # calls for the enter button 
             if event.type == pygame.MOUSEBUTTONDOWN and game.enter.location.collidepoint(event.pos):
                 game.mouse_down_enter(event)
+            
+            if event.type == pygame.MOUSEBUTTONDOWN and game.play_again_button.collidepoint(event.pos):
+                game = Game()
             
             # pressed on anywhere else
             if event.type == pygame.MOUSEBUTTONDOWN: 
