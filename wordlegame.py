@@ -16,8 +16,8 @@ from pygame.locals import*
 
 #Setting up the display
 clock = pygame.time.Clock()
-screen_width=1000
-screen_height=1000
+screen_width=700
+screen_height=1200
 background_color = (255, 255, 255) #white
 box_color = (211, 211, 211) #light gray
 yellow = (255, 191, 0)
@@ -54,9 +54,11 @@ def display_setup():
     font = pygame.font.Font('freesansbold.ttf', 40)
     display_screen = pygame.display.set_mode([screen_width, screen_height])
     pygame.display.set_caption("WORDLE")
-
+    big_font = pygame.font.Font('freesansbold.ttf', 35)
     display_screen.fill(background_color)
-
+    banner_rect = pygame.Rect(200, 50,200,50)
+    banner_text = big_font.render("WORDLE GAME", True, (0,0,0))
+    display_screen.blit(banner_text, banner_rect)
     return display_screen, font   
 
 
@@ -77,8 +79,8 @@ class Game:
         self.letter4_input_active = False
         self.letter5_input_active = False
         self.play_counter = 0
-        self.quit_game_button = pygame.Rect(50, 900,200,75)
-        self.play_again_button = pygame.Rect(300, 900,200,75)
+        self.quit_game_button = pygame.Rect(50, 870,200,50)
+        self.play_again_button = pygame.Rect(300, 870,200,50)
         self.game_won = False
 
         #self.answer_space_1 = pygame.Rect(50, 550, 100, 100)
@@ -155,7 +157,7 @@ class Game:
         
         won_message = ("You won! The answer was: %s. " % self.answer_word)
         text_0 = self.font_small.render(won_message, True, (0,0,0))
-        textRect0 =  text_0.get_rect(topleft = (150, 800), width = 500, height = 100)
+        textRect0 =  text_0.get_rect(topleft = (150, 840), width = 500, height = 20)
         self.display_screen.blit(text_0, textRect0)
 
         #pygame.draw.rect(self.display_screen, box_color, (500, 800,500,100))
@@ -166,15 +168,15 @@ class Game:
         # enter button font
         text_1 = self.font_small.render(play_again, True, (0,0,0))
         text_2 = self.font_small.render(quit_game, True, (0,0,0))
-        textRect1 = text_1.get_rect(topleft = (150, 850), width = 200, height = 50)
-        textRect2 = text_2.get_rect(topleft = (400, 850), width = 200, height = 50)
+        textRect1 = text_1.get_rect(topleft = (100, 895), width = 200, height = 50)
+        textRect2 = text_2.get_rect(topleft = (350, 895), width = 200, height = 50)
 
         #ENTER button draw
-        pygame.draw.rect(self.display_screen, play_again_button_color, (150, 850,200,50))
-        pygame.draw.rect(self.display_screen, border_color, (150, 850,200,50), width = border_width)
+        pygame.draw.rect(self.display_screen, play_again_button_color, (50, 870,200,50))
+        pygame.draw.rect(self.display_screen, border_color, (50, 870,200,50), width = border_width)
 
-        pygame.draw.rect(self.display_screen, quit_game_button_color, (400, 850,200,50))
-        pygame.draw.rect(self.display_screen, border_color, (400, 850,200,50), width = border_width)
+        pygame.draw.rect(self.display_screen, quit_game_button_color, (300, 870,200,50))
+        pygame.draw.rect(self.display_screen, border_color, (300, 870,200,50), width = border_width)
 
         self.display_screen.blit(text_1, textRect1)
         self.display_screen.blit(text_2, textRect2)
@@ -193,48 +195,34 @@ class Game:
 
                     """
                     # get text input from 0 to -1 i.e. end.
-                    self.user_text = self.user_text[:-1]
+                    self.user_text = ""
                     self.user_answer = self.user_answer[:-1]
                     # todo need box
 
-                    if self.letter1_input_active == True: 
-                        self.box_grid[5][0].draw_box()
+                    if pygame.Rect(50, 600, 100, 100).collidepoint(pygame.mouse.get_pos()): 
+                        self.box_grid[5][0].draw_box(user_input_color)
+                        self.letter1_input_active = False
+                    if pygame.Rect(150, 600, 100, 100).collidepoint(pygame.mouse.get_pos()): 
+                        self.letter2_input_active = False
+                        self.box_grid[5][1].draw_box(user_input_color)
+                    if pygame.Rect(250, 600, 100, 100).collidepoint(pygame.mouse.get_pos()): 
+                        self.letter3_input_active = False
+                        self.box_grid[5][2].draw_box(user_input_color)
+                    if pygame.Rect(350, 600, 100, 100).collidepoint(pygame.mouse.get_pos()): 
+                        self.letter4_input_active = False
+                        self.box_grid[5][3].draw_box(user_input_color)
+                    if pygame.Rect(450, 600, 100, 100).collidepoint(pygame.mouse.get_pos()): 
+                        self.letter5_input_active = False
+                        self.box_grid[5][4].draw_box(user_input_color)
 
-                    if self.letter1_input_active == True: 
-                        self.box_grid[5][1].draw_box()
-
-
-                    if self.letter1_input_active == True: 
-                        self.box_grid[5][2].draw_box()
-
-
-                    if self.letter1_input_active == True:
-                        self.box_grid[5][3].draw_box()
- 
-
-                    if self.letter1_input_active == True: 
-                        self.box_grid[5][4].draw_box()
-
-
-                    #self.add_text("", self.font) #delete the char from the screen
                     pygame.display.update()
 
-                    if pygame.Rect(50, 550, 100, 100).collidepoint(pygame.mouse.get_pos()): 
-                        self.letter1_input_active = False
-                    if pygame.Rect(150, 550, 100, 100).collidepoint(pygame.mouse.get_pos()): 
-                        self.letter2_input_active = False
-                    if pygame.Rect(250, 550, 100, 100).collidepoint(pygame.mouse.get_pos()): 
-                        self.letter3_input_active = False
-                    if pygame.Rect(350, 550, 100, 100).collidepoint(pygame.mouse.get_pos()): 
-                        self.letter4_input_active = False
-                    if pygame.Rect(450, 550, 100, 100).collidepoint(pygame.mouse.get_pos()): 
-                        self.letter5_input_active = False
                 else:
                     ch = chr(event.key)
                     self.user_text = event.unicode
                     
                     if self.letter1_input_active == True: 
-                        if pygame.Rect(50, 550, 100, 100).collidepoint(pygame.mouse.get_pos()): 
+                        if pygame.Rect(50, 600, 100, 100).collidepoint(pygame.mouse.get_pos()): 
                             self.letter1_input_active = True
                             self.box_grid[5][0].add_text(self.user_text, self.font)
                             self.user_answer = self.user_answer + self.user_text
@@ -243,7 +231,7 @@ class Game:
 
 
                         elif self.letter2_input_active == True: 
-                            if pygame.Rect(150, 550, 100, 100).collidepoint(pygame.mouse.get_pos()):
+                            if pygame.Rect(150, 600, 100, 100).collidepoint(pygame.mouse.get_pos()):
                                 self.letter2_input_active = True
                                 self.box_grid[5][1].add_text(self.user_text, self.font)
                                 self.user_answer = self.user_answer + self.user_text
@@ -251,7 +239,7 @@ class Game:
                                 print("User answer: ", self.user_answer)
 
                             elif self.letter3_input_active == True: 
-                                if pygame.Rect(250, 550, 100, 100).collidepoint(pygame.mouse.get_pos()): 
+                                if pygame.Rect(250, 600, 100, 100).collidepoint(pygame.mouse.get_pos()): 
                                     self.letter3_input_active = True
                                     self.box_grid[5][2].add_text(self.user_text, self.font)
                                     self.user_answer = self.user_answer + self.user_text
@@ -259,7 +247,7 @@ class Game:
                                     print("User answer: ", self.user_answer)
                                 
                                 elif self.letter4_input_active == True: 
-                                    if pygame.Rect(350, 550, 100, 100).collidepoint(pygame.mouse.get_pos()): 
+                                    if pygame.Rect(350, 600, 100, 100).collidepoint(pygame.mouse.get_pos()): 
                                         self.letter4_input_active = True
                                         self.box_grid[5][3].add_text(self.user_text, self.font)
                                         self.user_answer = self.user_answer + self.user_text
@@ -267,7 +255,7 @@ class Game:
                                         print("User answer: ", self.user_answer)
 
                                     elif self.letter5_input_active == True: 
-                                        if pygame.Rect(450, 550, 100, 100).collidepoint(pygame.mouse.get_pos()): 
+                                        if pygame.Rect(450, 600, 100, 100).collidepoint(pygame.mouse.get_pos()): 
                                             self.letter5_input_active = True
                                             self.box_grid[5][4].add_text(self.user_text, self.font)
                                             self.user_answer = self.user_answer + self.user_text
@@ -481,25 +469,25 @@ class Game:
     
     # if not pressed in enter button, it goes here
     def mouse_down_letter(self,event): 
-        if pygame.Rect(50, 550, 100, 100).collidepoint(pygame.mouse.get_pos()): # aka answer space 1
+        if pygame.Rect(50, 600, 100, 100).collidepoint(pygame.mouse.get_pos()): # aka answer space 1
             text = self.font.render("__", True, (0,0,0))
-            self.display_screen.blit(text, (75, 575))
+            self.display_screen.blit(text, (75, 625))
             self.letter1_input_active = True
-        elif pygame.Rect(150, 550, 100, 100).collidepoint(pygame.mouse.get_pos()): # aka answer space 2
+        elif pygame.Rect(150, 600, 100, 100).collidepoint(pygame.mouse.get_pos()): # aka answer space 2
             text = self.font.render("__", True, (0,0,0))
-            self.display_screen.blit(text, (175,575))
+            self.display_screen.blit(text, (175,625))
             self.letter2_input_active = True
-        elif pygame.Rect(250, 550, 100, 100).collidepoint(pygame.mouse.get_pos()): # aka answer space 3
+        elif pygame.Rect(250, 600, 100, 100).collidepoint(pygame.mouse.get_pos()): # aka answer space 3
             text = self.font.render("__", True, (0,0,0))
-            self.display_screen.blit(text, (275,575))
+            self.display_screen.blit(text, (275,625))
             self.letter3_input_active = True
-        elif pygame.Rect(350, 550, 100, 100).collidepoint(pygame.mouse.get_pos()): # aka answer space 4
+        elif pygame.Rect(350, 600, 100, 100).collidepoint(pygame.mouse.get_pos()): # aka answer space 4
             text = self.font.render("__", True, (0,0,0))
-            self.display_screen.blit(text, (375,575))
+            self.display_screen.blit(text, (375,625))
             self.letter4_input_active = True
-        elif pygame.Rect(450, 550, 100, 100).collidepoint(pygame.mouse.get_pos()): # aka answer space 5
+        elif pygame.Rect(450, 600, 100, 100).collidepoint(pygame.mouse.get_pos()): # aka answer space 5
             text = self.font.render("__", True, (0,0,0))
-            self.display_screen.blit(text, (475,575))
+            self.display_screen.blit(text, (475,625))
             self.letter5_input_active = True
 
 
@@ -534,12 +522,12 @@ class Box:
         self.letter = None
 
     def draw_box(self, color=box_color):
-        pygame.draw.rect(self.display_screen, color, (50 + (self.j*100), 50 + (self.i*100),100,100))
-        pygame.draw.rect(self.display_screen, border_color, (50 + (self.j*100), 50 + (self.i*100),100,100), width = border_width)
+        pygame.draw.rect(self.display_screen, color, (50 + (self.j*100), 100 + (self.i*100),100,100))
+        pygame.draw.rect(self.display_screen, border_color, (50 + (self.j*100), 100 + (self.i*100),100,100), width = border_width)
 
     def add_text(self, text, font):
         text = font.render(text, True, (0,0,0))
-        self.display_screen.blit(text, (75 + (self.j*100), 75 + (self.i*100))) #so its centered in the middle of the box
+        self.display_screen.blit(text, (75 + (self.j*100), 125 + (self.i*100))) #so its centered in the middle of the box
         self.letter = text
         
 
@@ -553,14 +541,14 @@ class Button:
         # enter button font
         text = font.render('ENTER', True, (0,0,0))
         textRect = text.get_rect()
-        textRect.center = (300, 737.5)
+        textRect.center = (300, 787.5)
 
         #ENTER button draw
-        pygame.draw.rect(display_screen, button_color, (200, 700,200,75))
-        pygame.draw.rect(display_screen, border_color, (200, 700,200,75), width = border_width)
+        pygame.draw.rect(display_screen, button_color, (200, 750,200,75))
+        pygame.draw.rect(display_screen, border_color, (200, 750,200,75), width = border_width)
         display_screen.blit(text, textRect)
 
-        self.location = pygame.Rect(200, 700,200,75)
+        self.location = pygame.Rect(200, 750,200,75)
         
 
 
@@ -586,14 +574,14 @@ def main():
                 not_done = False
 
             if event.type == pygame.MOUSEBUTTONDOWN and game.quit_game_button.collidepoint(event.pos):
-                not_done = False
+                main()
 
             # calls for the enter button 
             if event.type == pygame.MOUSEBUTTONDOWN and game.enter.location.collidepoint(event.pos):
                 game.mouse_down_enter(event)
             
             if event.type == pygame.MOUSEBUTTONDOWN and game.play_again_button.collidepoint(event.pos):
-                game = Game()
+                not_done = False
             
             # pressed on anywhere else
             if event.type == pygame.MOUSEBUTTONDOWN: 
